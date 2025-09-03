@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { 
   Clock, 
@@ -11,7 +14,10 @@ import {
   Calendar,
   Smartphone,
   Building,
-  User
+  User,
+  Search,
+  Filter,
+  AlertTriangle
 } from "lucide-react";
 
 interface Deal {
@@ -77,6 +83,26 @@ const mockDeals: Deal[] = [
     },
     createdAt: "01.09.2025, 16:30:15 GMT+3",
     status: "active"
+  },
+  {
+    id: "3242dfc5-b79b-41b8-8890-b153b9fa0d5e",
+    paymentMethod: {
+      system: "SBP",
+      bank: "ВТБ",
+      phone: "+7 (777) 888-99-00",
+      owner: "Петр К."
+    },
+    amount: {
+      rub: 15000,
+      usdt: 185.19,
+      rate: 81.0
+    },
+    reward: {
+      percentage: 5.5,
+      amount: 10.19
+    },
+    createdAt: "01.09.2025, 15:45:22 GMT+3",
+    status: "dispute"
   }
 ];
 
@@ -91,14 +117,14 @@ const getStatusBadge = (status: Deal["status"]) => {
     case "frozen":
       return <Badge className="bg-warning text-warning-foreground">Заморожено</Badge>;
     case "dispute":
-      return <Badge variant="outline">Спор</Badge>;
+      return <Badge className="bg-destructive/20 text-destructive border-destructive/20">Спор</Badge>;
     default:
       return <Badge variant="secondary">{status}</Badge>;
   }
 };
 
-const DealCard = ({ deal }: { deal: Deal }) => (
-  <Card className="border shadow-soft hover:shadow-medium transition-shadow">
+const DealCard = ({ deal, onApprove }: { deal: Deal; onApprove?: (id: string) => void }) => (
+  <Card className="border shadow-premium hover:shadow-strong transition-all duration-300 bg-gradient-card">
     <CardHeader className="pb-3">
       <div className="flex items-center justify-between">
         <CardTitle className="text-sm font-mono">ID: {deal.id.substring(0, 8)}...</CardTitle>
@@ -169,24 +195,56 @@ const DealCard = ({ deal }: { deal: Deal }) => (
           )}
         </div>
       </div>
+
+      {deal.status === "active" && onApprove && (
+        <>
+          <Separator />
+          <div className="flex justify-end">
+            <Button 
+              onClick={() => onApprove(deal.id)}
+              className="bg-gradient-primary hover:opacity-90 transition-opacity"
+            >
+              Одобрить сделку
+            </Button>
+          </div>
+        </>
+      )}
     </CardContent>
   </Card>
 );
 
 export const DealsPage = () => {
   const [activeDealsTab, setActiveDealsTab] = useState("active");
+  const [searchId, setSearchId] = useState("");
+  const [minAmount, setMinAmount] = useState("");
+  const [maxAmount, setMaxAmount] = useState("");
+
+  const handleApprove = (dealId: string) => {
+    console.log("Approving deal:", dealId);
+    // Implement approval logic here
+  };
 
   const filteredDeals = mockDeals.filter(deal => {
-    switch (activeDealsTab) {
-      case "active":
-        return deal.status === "active" || deal.status === "frozen";
-      case "completed":
-        return deal.status === "completed";
-      case "cancelled":
-        return deal.status === "cancelled" || deal.status === "dispute";
-      default:
-        return true;
-    }
+    const matchesTab = (() => {
+      switch (activeDealsTab) {
+        case "active":
+          return deal.status === "active" || deal.status === "frozen";
+        case "completed":
+          return deal.status === "completed";
+        case "cancelled":
+          return deal.status === "cancelled";
+        case "disputes":
+          return deal.status === "dispute";
+        default:
+          return true;
+      }
+    })();
+
+    const matchesSearch = !searchId || deal.id.toLowerCase().includes(searchId.toLowerCase());
+    const matchesMinAmount = !minAmount || deal.amount.rub >= parseFloat(minAmount);
+    const matchesMaxAmount = !maxAmount || deal.amount.rub <= parseFloat(maxAmount);
+
+    return matchesTab && matchesSearch && matchesMinAmount && matchesMaxAmount;
   });
 
   return (
@@ -196,8 +254,51 @@ export const DealsPage = () => {
         <p className="text-muted-foreground">Управление активными и завершенными сделками</p>
       </div>
 
+      {/* Search and Filter Section */}
+      <Card className="border shadow-premium bg-gradient-card">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Search className="h-5 w-5" />
+            Поиск и фильтры
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="search-id">Поиск по ID</Label>
+              <Input
+                id="search-id"
+                placeholder="Введите ID сделки"
+                value={searchId}
+                onChange={(e) => setSearchId(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="min-amount">Мин. сумма (RUB)</Label>
+              <Input
+                id="min-amount"
+                type="number"
+                placeholder="0"
+                value={minAmount}
+                onChange={(e) => setMinAmount(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="max-amount">Макс. сумма (RUB)</Label>
+              <Input
+                id="max-amount"
+                type="number"
+                placeholder="1000000"
+                value={maxAmount}
+                onChange={(e) => setMaxAmount(e.target.value)}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Tabs value={activeDealsTab} onValueChange={setActiveDealsTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-card">
+        <TabsList className="grid w-full grid-cols-4 bg-card shadow-soft">
           <TabsTrigger value="active" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Clock className="h-4 w-4" />
             Активные
@@ -210,16 +311,20 @@ export const DealsPage = () => {
             <XCircle className="h-4 w-4" />
             Отмененные
           </TabsTrigger>
+          <TabsTrigger value="disputes" className="flex items-center gap-2 data-[state=active]:bg-warning data-[state=active]:text-warning-foreground">
+            <AlertTriangle className="h-4 w-4" />
+            Споры
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value={activeDealsTab} className="mt-6">
           <div className="space-y-4">
             {filteredDeals.length > 0 ? (
               filteredDeals.map((deal) => (
-                <DealCard key={deal.id} deal={deal} />
+                <DealCard key={deal.id} deal={deal} onApprove={handleApprove} />
               ))
             ) : (
-              <Card className="border-dashed">
+              <Card className="border-dashed shadow-soft">
                 <CardContent className="flex flex-col items-center justify-center py-12">
                   <div className="text-muted-foreground text-center">
                     <p className="text-lg mb-2">Нет сделок</p>

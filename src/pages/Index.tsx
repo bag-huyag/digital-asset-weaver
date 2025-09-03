@@ -20,6 +20,12 @@ import {
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("home");
+  const [darkMode, setDarkMode] = useState(false);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.documentElement.classList.toggle('dark');
+  };
 
   return (
     <div className="min-h-screen bg-background">

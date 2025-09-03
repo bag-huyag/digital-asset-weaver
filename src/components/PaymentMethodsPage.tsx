@@ -290,9 +290,10 @@ const PaymentMethodCard = ({ method }: { method: PaymentMethod }) => (
         <div className="space-y-3">
           <h4 className="text-sm font-medium text-muted-foreground">Действия</h4>
           <div className="space-y-2">
-            <Badge variant={method.isActive ? "default" : "secondary"} className={method.isActive ? "bg-success text-success-foreground" : ""}>
-              {method.isActive ? "Активен" : "Неактивен"}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <span className="text-sm">Активен</span>
+              <Switch checked={method.isActive} />
+            </div>
             <div className="flex gap-2">
               <Button variant="outline" size="sm">
                 <Edit className="h-3 w-3 mr-1" />
