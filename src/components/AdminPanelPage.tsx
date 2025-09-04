@@ -191,6 +191,30 @@ const mockDeals: Deal[] = [
     updated: "01.09 20:57",
     timer: "Истекло",
     status: "COMPLETED"
+  },
+  {
+    id: "a1b2c3d4",
+    requisites: "Т-Банк SBP +79991234567 Иван И",
+    amount: "12000 ₽ / 148.15 USD",
+    merchant: "mock_merch",
+    merchantOrderId: "3c039354-b123-4567-8901-234567890123",
+    trader: "adus20091",
+    created: "02.09 14:30",
+    updated: "02.09 14:32",
+    timer: "00:15:23",
+    status: "ACTIVE"
+  },
+  {
+    id: "e5f6g7h8",
+    requisites: "ВТБ C2C 4276********1234 Петр П",
+    amount: "7500 ₽ / 92.59 USD",
+    merchant: "bitwire",
+    merchantOrderId: "9a8b7c6d-5e4f-3210-9876-543210987654",
+    trader: "rmnvch21",
+    created: "02.09 13:45",
+    updated: "02.09 13:47",
+    timer: "Истекло",
+    status: "CANCELLED"
   }
 ];
 
@@ -757,6 +781,18 @@ const AdminDealsTab = () => {
     recordsPerPage: "10"
   });
 
+  const [autoRefresh, setAutoRefresh] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState("08:21:23");
+
+  const handleRefresh = () => {
+    const now = new Date();
+    setLastUpdated(now.toLocaleTimeString('ru-RU', { 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      second: '2-digit' 
+    }));
+  };
+
   return (
     <div className="space-y-6">
       <Card className="border shadow-premium bg-gradient-card">
@@ -949,7 +985,32 @@ const AdminDealsTab = () => {
 
       <Card className="border shadow-premium bg-gradient-card">
         <CardHeader>
-          <CardTitle>Мониторинг сделок</CardTitle>
+          <CardTitle className="flex items-center justify-between">
+            <span>Мониторинг сделок</span>
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-muted-foreground">
+                Обновлено: {lastUpdated}
+              </div>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="auto-refresh" className="text-sm">Автообновление:</Label>
+                <Switch
+                  id="auto-refresh"
+                  checked={autoRefresh}
+                  onCheckedChange={setAutoRefresh}
+                />
+                <span className="text-sm">{autoRefresh ? "Вкл" : "Выкл"}</span>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleRefresh}
+                className="flex items-center gap-2"
+              >
+                <Search className="h-4 w-4" />
+                Обновить
+              </Button>
+            </div>
+          </CardTitle>
           <div className="text-sm text-muted-foreground">
             Всего сделок: {mockDeals.length} | Страница: 1 из 1
           </div>
