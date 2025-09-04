@@ -5,18 +5,19 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
 import { 
   Clock, 
   CheckCircle, 
   XCircle, 
-  DollarSign, 
-  Calendar,
-  Smartphone,
-  Building,
-  User,
   Search,
-  Filter,
   AlertTriangle
 } from "lucide-react";
 
@@ -123,92 +124,64 @@ const getStatusBadge = (status: Deal["status"]) => {
   }
 };
 
-const DealCard = ({ deal, onApprove }: { deal: Deal; onApprove?: (id: string) => void }) => (
-  <Card className="border shadow-premium hover:shadow-strong transition-all duration-300 bg-gradient-card">
-    <CardHeader className="pb-3">
-      <div className="flex items-center justify-between">
-        <CardTitle className="text-sm font-mono">ID: {deal.id.substring(0, 8)}...</CardTitle>
-        {getStatusBadge(deal.status)}
-      </div>
-    </CardHeader>
-    <CardContent className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <h4 className="text-sm font-medium text-muted-foreground">Реквизит</h4>
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-sm">
-              <Building className="h-3 w-3" />
-              <span>Система: {deal.paymentMethod.system}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Building className="h-3 w-3" />
-              <span>Банк: {deal.paymentMethod.bank}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Smartphone className="h-3 w-3" />
-              <span>Телефон: {deal.paymentMethod.phone}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <User className="h-3 w-3" />
-              <span>Владелец: {deal.paymentMethod.owner}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <h4 className="text-sm font-medium text-muted-foreground">Сумма сделки</h4>
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-success" />
-              <span className="font-semibold">{deal.amount.rub.toLocaleString()} RUB</span>
-            </div>
-            <div className="text-sm text-muted-foreground">
-              ≈ {deal.amount.usdt.toFixed(8)} USDT
-            </div>
-            <div className="text-sm text-muted-foreground">
-              🔁 1 USDT = {deal.amount.rate} RUB
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <Separator />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <h4 className="text-sm font-medium text-muted-foreground mb-1">Награда трейдера</h4>
-          <div className="text-sm">
-            <span className="text-success font-semibold">{deal.reward.percentage}%</span> ваша доля → {deal.reward.amount} USDT
-          </div>
-        </div>
-
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 text-sm">
-            <Calendar className="h-3 w-3" />
-            <span>Создана в: {deal.createdAt}</span>
-          </div>
-          {deal.completedAt && (
-            <div className="flex items-center gap-2 text-sm">
-              <CheckCircle className="h-3 w-3 text-success" />
-              <span>Завершена в: {deal.completedAt}</span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {deal.status === "active" && onApprove && (
-        <>
-          <Separator />
-          <div className="flex justify-end">
-            <Button 
-              onClick={() => onApprove(deal.id)}
-              className="bg-gradient-primary hover:opacity-90 transition-opacity"
-            >
-              Одобрить сделку
-            </Button>
-          </div>
-        </>
-      )}
+const DealsTable = ({ deals, onApprove }: { deals: Deal[]; onApprove?: (id: string) => void }) => (
+  <Card className="border shadow-premium bg-gradient-card">
+    <CardContent className="p-0">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>ID</TableHead>
+            <TableHead>Реквизит</TableHead>
+            <TableHead>Сумма сделки</TableHead>
+            <TableHead>Награда трейдера</TableHead>
+            <TableHead>Создана в</TableHead>
+            <TableHead>Завершена в</TableHead>
+            <TableHead>Статус</TableHead>
+            <TableHead>Действия</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {deals.map((deal) => (
+            <TableRow key={deal.id}>
+              <TableCell className="font-mono text-xs">{deal.id.substring(0, 8)}...</TableCell>
+              <TableCell>
+                <div className="space-y-1">
+                  <div className="text-sm font-medium">{deal.paymentMethod.system} - {deal.paymentMethod.bank}</div>
+                  <div className="text-xs text-muted-foreground">{deal.paymentMethod.phone}</div>
+                  <div className="text-xs text-muted-foreground">{deal.paymentMethod.owner}</div>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="space-y-1">
+                  <div className="font-semibold">{deal.amount.rub.toLocaleString()} RUB</div>
+                  <div className="text-xs text-muted-foreground">≈ {deal.amount.usdt.toFixed(2)} USDT</div>
+                  <div className="text-xs text-muted-foreground">Rate: {deal.amount.rate}</div>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="text-sm">
+                  <span className="text-success font-semibold">{deal.reward.percentage}%</span>
+                  <div className="text-xs text-muted-foreground">{deal.reward.amount} USDT</div>
+                </div>
+              </TableCell>
+              <TableCell className="text-sm">{deal.createdAt}</TableCell>
+              <TableCell className="text-sm">{deal.completedAt || "—"}</TableCell>
+              <TableCell>{getStatusBadge(deal.status)}</TableCell>
+              <TableCell>
+                {deal.status === "active" && onApprove && (
+                  <Button 
+                    size="sm"
+                    onClick={() => onApprove(deal.id)}
+                    className="bg-gradient-primary hover:opacity-90 transition-opacity"
+                  >
+                    Одобрить
+                  </Button>
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </CardContent>
   </Card>
 );
@@ -318,22 +291,18 @@ export const DealsPage = () => {
         </TabsList>
 
         <TabsContent value={activeDealsTab} className="mt-6">
-          <div className="space-y-4">
-            {filteredDeals.length > 0 ? (
-              filteredDeals.map((deal) => (
-                <DealCard key={deal.id} deal={deal} onApprove={handleApprove} />
-              ))
-            ) : (
-              <Card className="border-dashed shadow-soft">
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <div className="text-muted-foreground text-center">
-                    <p className="text-lg mb-2">Нет сделок</p>
-                    <p className="text-sm">В данной категории пока нет сделок</p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+          {filteredDeals.length > 0 ? (
+            <DealsTable deals={filteredDeals} onApprove={handleApprove} />
+          ) : (
+            <Card className="border-dashed shadow-soft">
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <div className="text-muted-foreground text-center">
+                  <p className="text-lg mb-2">Нет сделок</p>
+                  <p className="text-sm">В данной категории пока нет сделок</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
     </div>
