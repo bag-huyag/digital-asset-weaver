@@ -6,9 +6,10 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { QrCode, Shield, Bell, LogOut, Key, Eye, EyeOff } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export const SettingsPage = () => {
+  const { toast } = useToast();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [twoFactorCode, setTwoFactorCode] = useState("");
   const [loginNotifications, setLoginNotifications] = useState(true);

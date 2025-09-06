@@ -13,7 +13,7 @@ import {
   Edit, 
   Trash2 
 } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const mockPaymentMethods = [
   {
@@ -81,6 +81,7 @@ function getPaymentTypeLabel(type) {
 }
 
 export const PaymentMethodsPage = () => {
+  const { toast } = useToast();
   const [paymentMethods, setPaymentMethods] = useState(mockPaymentMethods);
   const [newMethodBank, setNewMethodBank] = useState("");
   const [newMethodDetails, setNewMethodDetails] = useState("");

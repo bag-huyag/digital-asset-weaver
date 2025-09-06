@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import { Search, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const mockDeals = [
   {
@@ -180,6 +180,7 @@ function DealsTable({ deals, onApprove, showApproveButton = false }) {
 }
 
 export const DealsPage = () => {
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("active");
   const [searchQuery, setSearchQuery] = useState("");
   const [minAmount, setMinAmount] = useState("");

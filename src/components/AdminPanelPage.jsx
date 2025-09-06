@@ -28,7 +28,7 @@ import {
   Clock,
   Filter
 } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 // Mock data
 const mockTrafficSettings = [
@@ -208,6 +208,7 @@ function getStatusBadge(status) {
 }
 
 export const AdminPanelPage = () => {
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("traffic");
   
   // Traffic settings state
