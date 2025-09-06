@@ -136,3 +136,37 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .text-premium-primary {
+    @apply text-primary;
+  }
+  
+  .bg-premium-primary\/10 {
+    @apply bg-primary/10;
+  }
+  
+  .border-premium-primary\/20 {
+    @apply border-primary/20;
+  }
+  
+  .hover\:bg-premium-primary\/20:hover {
+    @apply hover:bg-primary/20;
+  }
+  
+  .bg-gradient-text {
+    background: var(--gradient-premium);
+  }
+  
+  .shadow-glow {
+    box-shadow: var(--shadow-premium);
+  }
+  
+  .shadow-premium {
+    box-shadow: var(--shadow-medium);
+  }
+  
+  .bg-gradient-card {
+    background: var(--gradient-card);
+  }
+}
