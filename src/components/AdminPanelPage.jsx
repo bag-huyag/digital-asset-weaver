@@ -229,14 +229,14 @@ export const AdminPanelPage = () => {
   const [dealsFilters, setDealsFilters] = useState({
     trader: "",
     merchant: "",
-    status: "",
-    dealType: "",
+    status: "all",
+    dealType: "all",
     dealId: "",
     searchId: "",
     merchantOrderId: "",
-    bank: "",
+    bank: "all",
     deviceId: "",
-    paymentSystem: "",
+    paymentSystem: "all",
     amountFrom: "",
     amountTo: "",
     dateFrom: "",
@@ -698,7 +698,7 @@ export const AdminPanelPage = () => {
                           <SelectValue placeholder="Все статусы" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Все статусы</SelectItem>
+                          <SelectItem value="all">Все статусы</SelectItem>
                           <SelectItem value="ACTIVE">Активные</SelectItem>
                           <SelectItem value="COMPLETED">Завершённые</SelectItem>
                           <SelectItem value="CANCELLED">Отменённые</SelectItem>
@@ -712,7 +712,7 @@ export const AdminPanelPage = () => {
                           <SelectValue placeholder="Все типы" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Все типы</SelectItem>
+                          <SelectItem value="all">Все типы</SelectItem>
                           <SelectItem value="buy">Покупка</SelectItem>
                           <SelectItem value="sell">Продажа</SelectItem>
                         </SelectContent>
@@ -755,7 +755,7 @@ export const AdminPanelPage = () => {
                           <SelectValue placeholder="Все банки" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Все банки</SelectItem>
+                          <SelectItem value="all">Все банки</SelectItem>
                           <SelectItem value="tbank">Т-Банк</SelectItem>
                           <SelectItem value="sber">Сбербанк</SelectItem>
                           <SelectItem value="vtb">ВТБ</SelectItem>
@@ -782,7 +782,7 @@ export const AdminPanelPage = () => {
                           <SelectValue placeholder="Все системы" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Все системы</SelectItem>
+                          <SelectItem value="all">Все системы</SelectItem>
                           <SelectItem value="sbp">СБП</SelectItem>
                           <SelectItem value="card">Карта</SelectItem>
                           <SelectItem value="qiwi">QIWI</SelectItem>
